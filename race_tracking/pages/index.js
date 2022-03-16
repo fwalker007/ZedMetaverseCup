@@ -102,7 +102,6 @@ export default function Home({ horseData }) {
   export async function getStaticProps()
     {
 
-
     const client = new ApolloClient({
       uri: 'https://zed-ql.zed.run/graphql',
       cache: new InMemoryCache()
@@ -123,7 +122,6 @@ export default function Home({ horseData }) {
         surface_preference
         updated_at
         owner
-        class
         offsprings
           {name}
         } 
