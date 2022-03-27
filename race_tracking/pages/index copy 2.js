@@ -4,18 +4,16 @@ import styles from '../styles/Home.module.css'
 import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
+export default function Home3({ racesData }) {
 
-
-export default function Home({ racesData }) {
-  
-  var wins = 0;
-  var num1000Races = 0;
  // console.log('racesData', racesData);
 
-// var myHorseInfo = racesData.filter(function(horse){
-//    return( racesData.node.horses.horse.horseId === 145639 )
-//    });
-
+  function Test ()
+  {
+    return(
+      <h1> Test ..............................................</h1>
+    )
+  }
 
   return (
     <div className="flex flex-col">
@@ -55,36 +53,43 @@ export default function Home({ racesData }) {
               </tr>
             </thead> 
             <tbody className="bg-white divide-y divide-gray-200">
+              {racesData.map((race) => (
 
-       { racesData.forEach((race) => {
-            race.node.horses.forEach((horse) => {
-              if( horse.horseId === 145639)
-              {
-                if( race.node.length === 1000 )
-                {
-                  let pos = horse.position;
-                  if( pos == 1)
-                  {
-                      wins += 1;                    
-                  }
-                  num1000Races++;
-                }
-              }            
-            });
-          })
-        }
+                <tr key={race.node.raceId}>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-10 w-10">
+                      <div className="text-sm font-medium text-gray-900">{race.node.name}</div>
+                       </div>
+                    </div>
+                  </td>
 
-        {
-            console.log( "Wins " + wins)
-        }
-        {
-            console.log( "1000s "  + num1000Races )         
-        }
-      
-      {
-            console.log( racesData )         
-        }
 
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm text-gray-900">{race.node.length}</div>
+                  </td>
+ 
+                  {Test}
+
+                  {race.node.horses.map((horse) => (
+  
+                    <tr key={horse.horseId}>
+
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                      < div className="flex-shrink-0 h-10 w-10">{horse.horseId}</div>
+                        <div className="flex-shrink-0 h-10 w-10">{horse.name}</div>
+                        <div className="flex-shrink-0 h-20 w-10">{horse.position}</div>
+                      </div>
+                    </td>
+                    
+                    </tr>
+   
+
+                  ))}
+
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
@@ -129,7 +134,7 @@ export default function Home({ racesData }) {
          is_tournament: false,
          distance: {
            from: 1000,
-           to: 2600
+           to: 1000
          },
          horses: [145639]
          }
