@@ -1,11 +1,74 @@
 import { useState, useRef, useEffect } from 'react';
 import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-import calculateStats, {calculeMaxWinPlaceStats} from '../libs/raceStatsManager'
+
 
 export default function Home({ racesData }) {
 
-//console.log(raceStats)
+  const MAX_RACES = 9
+  const [raceStats, setRaceStats] = useState()
+
+
+  function getInitialStats() {
+
+    let myRaceStats = []
+
+    for( let i=0; i<MAX_RACES; i++){ 
+      let raceStatItem = {
+        length: (i * 200) + 1000,
+        wins: 0,
+        placeds: 0,
+        numOfRaces: 0,
+        winPercent: 0,
+        placePercent: 0
+      }
+      myRaceStats.push(raceStatItem)
+    }
+    setRaceStats(myRaceStats)
+  }  
+
+ const setUpdate = (length, isWin, isPlaced, totalRaces) => {
+    setRaceStats(prevState =>
+      prevState.map(raceStat => {
+        if (raceStat.length === length) {
+          return {
+            ...raceStat,
+            wins: raceStat.wins + isWin,
+            place: raceStat.placeds + isPlaced,
+            totalRaces: raceStat.numOfRaces + totalRaces
+          }
+        }
+        return raceStat
+      })
+    )
+  }
+  
+  racesData.forEach((race) => {
+    race.node.horses.forEach((horse) => {
+      if( horse.horseId === 145639)
+      {
+        let isWin = 0;
+        let isPlaced = 0;
+
+        if( horse.position == 1 )
+        {
+
+          isWin = 1;
+        }
+        else if( horse.position == 2 || horse.position == 3)
+        {
+          isPlaced = 1;
+        }
+
+        let index = 200 / (race.node.length - 1000) 
+        console.log(index)
+        console.log( myRaceStats[index] )
+        //setUpdate(race.node.length, isWin, isPlaced, 1)
+      }            
+    });
+  })
+       
+ //console.log(raceStats)
 
   return (
     <div className="flex flex-col">
@@ -15,19 +78,28 @@ export default function Home({ racesData }) {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Name
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Length
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Surface Preference
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Win %
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
+                  Status
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Place %
-                </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th
+                  scope="col"
+                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                >
                   Role
                 </th>
                 <th scope="col" className="relative px-6 py-3">
@@ -37,29 +109,9 @@ export default function Home({ racesData }) {
             </thead> 
             <tbody className="bg-white divide-y divide-gray-200">
 
-            {racesData.map((racesStats) => (
-                <tr key={racesStats.Length}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{racesStats.horseName}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{racesStats.Length}</div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{racesStats.Wins}</div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{racesStats.Placed}</div>
-                  </td>
-                </tr>
-              ))}
-              {
-                    console.log(racesData)
-              }
+  
+
+
             </tbody>
           </table>
         </div>
@@ -72,6 +124,8 @@ export default function Home({ racesData }) {
 
   export async function getStaticProps()
   {
+    
+
     const httpLink = createHttpLink({
         uri: 'https://zed-ql.zed.run/graphql',
     });
@@ -105,7 +159,7 @@ export default function Home({ racesData }) {
            from: 1000,
            to: 2600
          },
-         horses: [145639,187382,209869]
+         horses: [145639]
          }
        ) {
          edges {
@@ -147,32 +201,36 @@ export default function Home({ racesData }) {
     })
 
        
-    let winPlaceStatsForAllHorses = []
-
-    let myRaceStats = data.get_race_results.edges.map( (race) => { 
+    const myRaceStats = data.get_race_results.edges.map( (race) => { 
         const myhorse = race.node.horses.find( (horse) => horse.horseId === 145639 )
-        if( myhorse != undefined )
-          return( { name: myhorse.name,  raceLength: race.node.length, position: myhorse.position })
-    })
-
-    console.log(myRaceStats)
-    calculeMaxWinPlaceStats(winPlaceStatsForAllHorses, myRaceStats)
-   
-
-    let myRaceStats2 = data.get_race_results.edges.map( (race) => { 
-      const myhorse = race.node.horses.find( (horse) => horse.horseId === 187382 )
-      if( myhorse != undefined )
         return( { name: myhorse.name,  raceLength: race.node.length, position: myhorse.position })
     })
 
-    console.log(myRaceStats2)
-    calculeMaxWinPlaceStats(winPlaceStatsForAllHorses, myRaceStats2)
+    let numOf1000Races = 0
+    let wins = 0
+    let placeds = 0
 
-   // console.log(winPlaceStatsForAllHorses)
+    const OneThousandRaces = myRaceStats.filter( (lengthRace) => 
+    {
+        numOf1000Races++;
+        if( lengthRace.position == 1){
+          wins++
+        }
+        else if( lengthRace.position == 2 || lengthRace == 3){
+          placeds++
+        }
+        return( lengthRace.raceLength == 1000 )
+    })
 
+    console.log( OneThousandRaces )
+
+    console.log( numOf1000Races )
+    console.log( numOf1000Races )
+    console.log( numOf1000Races )
+    
     return {
       props: {
-        racesData: winPlaceStatsForAllHorses
+        racesData: data.get_race_results.edges
       }
     }
   }
