@@ -1,21 +1,74 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import { useState, useRef, useEffect } from 'react';
 import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 
 
-
 export default function Home({ racesData }) {
+
+  const MAX_RACES = 9
+  const [raceStats, setRaceStats] = useState()
+
+
+  function getInitialStats() {
+
+    let myRaceStats = []
+
+    for( let i=0; i<MAX_RACES; i++){ 
+      let raceStatItem = {
+        length: (i * 200) + 1000,
+        wins: 0,
+        placeds: 0,
+        numOfRaces: 0,
+        winPercent: 0,
+        placePercent: 0
+      }
+      myRaceStats.push(raceStatItem)
+    }
+    setRaceStats(myRaceStats)
+  }  
+
+ const setUpdate = (length, isWin, isPlaced, totalRaces) => {
+    setRaceStats(prevState =>
+      prevState.map(raceStat => {
+        if (raceStat.length === length) {
+          return {
+            ...raceStat,
+            wins: raceStat.wins + isWin,
+            place: raceStat.placeds + isPlaced,
+            totalRaces: raceStat.numOfRaces + totalRaces
+          }
+        }
+        return raceStat
+      })
+    )
+  }
   
-  var wins = 0;
-  var num1000Races = 0;
- // console.log('racesData', racesData);
+  racesData.forEach((race) => {
+    race.node.horses.forEach((horse) => {
+      if( horse.horseId === 145639)
+      {
+        let isWin = 0;
+        let isPlaced = 0;
 
-// var myHorseInfo = racesData.filter(function(horse){
-//    return( racesData.node.horses.horse.horseId === 145639 )
-//    });
+        if( horse.position == 1 )
+        {
 
+          isWin = 1;
+        }
+        else if( horse.position == 2 || horse.position == 3)
+        {
+          isPlaced = 1;
+        }
+
+        let index = 200 / (race.node.length - 1000) 
+        console.log(index)
+        console.log( myRaceStats[index] )
+        //setUpdate(race.node.length, isWin, isPlaced, 1)
+      }            
+    });
+  })
+       
+ //console.log(raceStats)
 
   return (
     <div className="flex flex-col">
@@ -56,34 +109,8 @@ export default function Home({ racesData }) {
             </thead> 
             <tbody className="bg-white divide-y divide-gray-200">
 
-       { racesData.forEach((race) => {
-            race.node.horses.forEach((horse) => {
-              if( horse.horseId === 145639)
-              {
-                if( race.node.length === 1000 )
-                {
-                  let pos = horse.position;
-                  if( pos == 1)
-                  {
-                      wins += 1;                    
-                  }
-                  num1000Races++;
-                }
-              }            
-            });
-          })
-        }
+  
 
-        {
-            console.log( "Wins " + wins)
-        }
-        {
-            console.log( "1000s "  + num1000Races )         
-        }
-      
-      {
-            console.log( racesData )         
-        }
 
             </tbody>
           </table>
@@ -171,6 +198,14 @@ export default function Home({ racesData }) {
      }    
       `
     })
+
+       
+    const myRaceStats = data.get_race_results.edges.map( (race) => { 
+        const myhorse = race.node.horses.find( (horse) => horse.horseId === 145639 )
+        return( { name: myhorse.name, position: myhorse.position })
+    })
+
+    console.log( myRaceStats )
 
     return {
       props: {
