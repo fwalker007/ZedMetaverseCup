@@ -27,9 +27,6 @@ export default function Home({ racesData }) {
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Place %
                 </th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Role
-                </th>
                 <th scope="col" className="relative px-6 py-3">
                   <span className="sr-only">Edit</span>
                 </th>
@@ -39,21 +36,26 @@ export default function Home({ racesData }) {
 
             {racesData.map((racesStats) => (
                 <tr key={racesStats.Length}>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{racesStats.horseName}</div>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <div className="flex-shrink-0 h-30 w-20">
+                        <img className="h-20 w-20 rounded-full" src={racesStats.img} alt="" />
+                        <div className="text-sm font-medium text-gray-900">{racesStats.horseName}</div>
+                      </div>
+                    </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
+                    <div className="flex items-Left">
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{racesStats.Length}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">{racesStats.Wins}</div>
+                    <div className="text-sm text-gray-900">{racesStats.Wins.toFixed(2)}%</div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{racesStats.Placed}</div>
+                  <td className="px-6 py-4 whitFirst woespace-nowrap">
+                    <div className="text-sm text-gray-500">{racesStats.Placed.toFixed(2)}%</div>
                   </td>
                 </tr>
               ))}
@@ -149,26 +151,11 @@ export default function Home({ racesData }) {
        
     let winPlaceStatsForAllHorses = []
 
-    let myRaceStats = data.get_race_results.edges.map( (race) => { 
-        const myhorse = race.node.horses.find( (horse) => horse.horseId === 145639 )
-        if( myhorse != undefined )
-          return( { name: myhorse.name,  raceLength: race.node.length, position: myhorse.position })
-    })
+    winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, 145639))
+    winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, 187382))
+    winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, 209869))
 
-    console.log(myRaceStats)
-    calculeMaxWinPlaceStats(winPlaceStatsForAllHorses, myRaceStats)
-   
-
-    let myRaceStats2 = data.get_race_results.edges.map( (race) => { 
-      const myhorse = race.node.horses.find( (horse) => horse.horseId === 187382 )
-      if( myhorse != undefined )
-        return( { name: myhorse.name,  raceLength: race.node.length, position: myhorse.position })
-    })
-
-    console.log(myRaceStats2)
-    calculeMaxWinPlaceStats(winPlaceStatsForAllHorses, myRaceStats2)
-
-   // console.log(winPlaceStatsForAllHorses)
+    console.log(winPlaceStatsForAllHorses)
 
     return {
       props: {
