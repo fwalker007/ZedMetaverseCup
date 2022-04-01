@@ -2,10 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import calculateStats, {calculeMaxWinPlaceStats} from '../libs/raceStatsManager'
+import { responsePathAsArray } from 'graphql';
+import GetRacesQueryString, {GET_RACES_QL} from "../libs/graphQLManager"
+
 
 export default function Home({ racesData }) {
 
-//console.log(raceStats)
 
   return (
     <div className="flex flex-col">
@@ -16,7 +18,9 @@ export default function Home({ racesData }) {
             <thead className="bg-gray-50">
               <tr>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Name
+                  Horse
+                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">                
                 </th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Length
@@ -36,18 +40,25 @@ export default function Home({ racesData }) {
 
             {racesData.map((racesStats) => (
                 <tr key={racesStats.Length}>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-30 w-20">
-                        <img className="h-20 w-20 rounded-full" src={racesStats.img} alt="" />
-                        <div className="text-sm font-medium text-gray-900">{racesStats.horseName}</div>
+                    <td className="px-4 py-2">
+                    <div className='w-12'>
+                      <div className="h-10 w-12">
+                        <img className="h-12 w-12 rounded-full" src={racesStats.img} alt="" />
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="items-Left">
+                      <div className="ml-4">
+                      <div className="text-sm font-medium text-gray-900">{racesStats.horseName}</div>
                       </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-Left">
+                    <div className="items-Left">
                       <div className="ml-4">
                         <div className="text-sm font-medium text-gray-900">{racesStats.Length}</div>
+                        <div className="text-sm font-medium text-gray-900">{racesStats.Races}</div>
                       </div>
                     </div>
                   </td>
@@ -57,10 +68,12 @@ export default function Home({ racesData }) {
                   <td className="px-6 py-4 whitFirst woespace-nowrap">
                     <div className="text-sm text-gray-500">{racesStats.Placed.toFixed(2)}%</div>
                   </td>
+                  <td className="px-6 py-4 flex whitFirst woespace-nowrap">
+                  </td>
                 </tr>
               ))}
               {
-                    console.log(racesData)
+                  //  console.log(racesData)
               }
             </tbody>
           </table>
@@ -74,6 +87,15 @@ export default function Home({ racesData }) {
 
   export async function getStaticProps()
   {
+    const response = await fetch("https://api.zed.run/api/v1/horses/get_user_horses?public_address=0x6008Fd486b7B85Ff82150C85F6CE80a2632B6762&offset=0&horse_name=&sort_by=horse_name_asc") 
+    const playerHorsesDO = await response.json()
+
+    let horsesIDs = playerHorsesDO.map( (horse) => { 
+      return(horse.horse_id)
+    })
+
+    console.log(horsesIDs)
+         
     const httpLink = createHttpLink({
         uri: 'https://zed-ql.zed.run/graphql',
     });
@@ -94,66 +116,20 @@ export default function Home({ racesData }) {
         link: authLink.concat(httpLink),
         cache: new InMemoryCache()
     });
-    
+
     const { data } = await client.query({
-      query: gql`
-      query GetRaceResults {
-        get_race_results(
-         first:1000
-         input:
-         {only_my_racehorses: true,
-         is_tournament: false,
-         distance: {
-           from: 1000,
-           to: 2600
-         },
-         horses: [145639,187382,209869]
-         }
-       ) {
-         edges {
-           node {
-             name
-             length
-             startTime: start_time
-             raceId: race_id
-             horses {
-               horseId: horse_id
-               time: finish_time
-               position: final_position
-               name
-               gate
-               owner: owner_address
-               bloodline
-               gender
-               breedType: breed_type
-               genotype: gen
-               races
-               coat
-               winRate: win_rate
-               career
-               skin {
-                 name
-                 image
-                 texture
-               }
-               hexCode: hex_color
-               imgUrl: img_url
-               class
-               stable: stable_name
-             }
-           }
-         }
-       }
-     }    
-      `
+      query: GET_RACES_QL,
+      variables: {
+        horseIds: {horsesIDs}
+      }
     })
 
-       
+
     let winPlaceStatsForAllHorses = []
 
-    winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, 145639))
-    winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, 187382))
-    winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, 209869))
+    playerHorsesDO.map( (horse) => {
+      winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, horse.horse_id))
+    })
 
     console.log(winPlaceStatsForAllHorses)
 

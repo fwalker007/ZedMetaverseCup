@@ -41,17 +41,15 @@ export const calculeMaxWinPlaceStats = (racesStats, aHorseId) => {
     const myhorse = race.node.horses.find( (horse) => horse.horseId === aHorseId )
     if( myhorse != undefined )
       return( { name: myhorse.name,  raceLength: race.node.length, position: myhorse.position, img: myhorse.imgUrl })
-})
+  })
 
   let maxWins = 0;
   let maxRace 
 
-  for( let i=0; i<9; i++)
-  {
+  for( let i=0; i<9; i++){
     let raceLength = (i * 200 ) + 1000
     const raceStats = calculateStats(horsesRacesInfo, raceLength)
-    if( raceStats.Wins > maxWins )
-    {
+    if( raceStats.Wins > maxWins ){
       maxWins = raceStats.Wins
       maxRace = raceStats
     }
