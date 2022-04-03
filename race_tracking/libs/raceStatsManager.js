@@ -1,4 +1,5 @@
 
+const CURRENT_TOURNAMENT = "https://tournaments-api.zed.run/tournaments/current"
 
 const calculateStats = (myRaceStats, raceLength) => {
     
@@ -33,7 +34,7 @@ const calculateStats = (myRaceStats, raceLength) => {
     return({ horseName: horseName, Length: raceLength, Races: numOf1000Races, Wins: wins/numOf1000Races * 100, Placed: placeds/numOf1000Races * 100, img: horseImg })
 
   }
-
+export default calculateStats 
 
 export const calculeMaxWinPlaceStats = (racesStats, aHorseId) => {
 
@@ -54,10 +55,40 @@ export const calculeMaxWinPlaceStats = (racesStats, aHorseId) => {
       maxRace = raceStats
     }
   }
-
   return(maxRace)
+} 
 
+export const AgregatePositions = (racesStats, aHorseId) => {
+
+  let horsePositions = ""
+  let horseRacelength = ""
+  let horseName = ""
+  let horseImg = ""
+
+  racesStats.map( (race) => { 
+    const myhorse = race.node.horses.find( (horse) => horse.horseId === aHorseId )
+    if( myhorse != undefined )
+    {
+      horsePositions += "-" + myhorse.position
+      horseRacelength += "-" + race.node.length
+      horseName = myhorse.name
+      horseImg =  myhorse.imgUrl
+    }
+  })
+
+  if( horseName === "")
+    return(undefined)
+
+
+  return( { name: horseName,  raceLength: horseRacelength.substring(1), position: horsePositions.substring(1), img: horseImg })
+} 
+
+export async function GetCurrentTournament() {
+  let response = await fetch(CURRENT_TOURNAMENT) 
+  let currentTournament = await response.json()  
+
+  return(currentTournament)
 }
 
-export default calculateStats 
+
 

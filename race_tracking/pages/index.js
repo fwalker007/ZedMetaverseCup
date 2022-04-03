@@ -2,15 +2,12 @@ import { useState, useRef, useEffect } from 'react';
 import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
 import calculateStats, {calculeMaxWinPlaceStats} from '../libs/raceStatsManager'
-import { responsePathAsArray } from 'graphql';
 import GetRacesQueryString, {GET_RACES_QL} from "../libs/graphQLManager"
-
+import GetPlayerHorses from '../libs/playerManager';
 
 export default function Home({ racesData }) {
-
-
   return (
-    <div className="flex flex-col">
+    <div className="flex items-center justify-center min-h-screen bg-gray-900">
     <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
       <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
         <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
@@ -87,14 +84,22 @@ export default function Home({ racesData }) {
 
   export async function getStaticProps()
   {
-    const response = await fetch("https://api.zed.run/api/v1/horses/get_user_horses?public_address=0x6008Fd486b7B85Ff82150C85F6CE80a2632B6762&offset=0&horse_name=&sort_by=horse_name_asc") 
-    const playerHorsesDO = await response.json()
+    const public_address =  "0x6008Fd486b7B85Ff82150C85F6CE80a2632B6762"
 
-    let horsesIDs = playerHorsesDO.map( (horse) => { 
+    let playersHorses = await GetPlayerHorses(public_address) 
+    console.log(playersHorses)
+    let horsesIDs = playersHorses.map( (horse) => { 
       return(horse.horse_id)
     })
 
-    console.log(horsesIDs)
+    if(horsesIDs.length <= 0 )
+    {
+      return{
+          props: {
+            racesData: []
+        }
+      }
+    }
          
     const httpLink = createHttpLink({
         uri: 'https://zed-ql.zed.run/graphql',
@@ -127,9 +132,14 @@ export default function Home({ racesData }) {
 
     let winPlaceStatsForAllHorses = []
 
-    playerHorsesDO.map( (horse) => {
+    playersHorses.map( (horse) => {
+      
       winPlaceStatsForAllHorses.push(calculeMaxWinPlaceStats(data.get_race_results.edges, horse.horse_id))
     })
+
+    winPlaceStatsForAllHorses.sort(function(a, b) {
+      return b.Wins - a.Wins;
+    });
 
     console.log(winPlaceStatsForAllHorses)
 
