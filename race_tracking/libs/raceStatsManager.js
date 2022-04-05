@@ -60,27 +60,18 @@ export const calculeMaxWinPlaceStats = (racesStats, aHorseId) => {
 
 export const AgregatePositions = (racesStats, aHorseId) => {
 
-  let horsePositions = ""
-  let horseRacelength = ""
-  let horseName = ""
-  let horseImg = ""
+  let horsePositions = []
+  let horseRacelength = []
 
   racesStats.map( (race) => { 
     const myhorse = race.node.horses.find( (horse) => horse.horseId === aHorseId )
-    if( myhorse != undefined )
-    {
-      horsePositions += "-" + myhorse.position
-      horseRacelength += "-" + race.node.length
-      horseName = myhorse.name
-      horseImg =  myhorse.imgUrl
+    if( myhorse != undefined ){
+      horsePositions.push( myhorse.position )
+      horseRacelength.push( race.node.length )
     }
   })
 
-  if( horseName === "")
-    return(undefined)
-
-
-  return( { name: horseName,  raceLength: horseRacelength.substring(1), position: horsePositions.substring(1), img: horseImg })
+  return( { name: "",  img: "",  raceLength: horseRacelength, position: horsePositions, preferLength: undefined, winPecent: 0, placePercent: 0})
 } 
 
 export async function GetCurrentTournament() {
