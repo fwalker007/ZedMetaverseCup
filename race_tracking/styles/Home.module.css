@@ -108,6 +108,14 @@
   margin-left: 0.5rem;
 }
 
+.circle{
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
 @media (max-width: 600px) {
   .grid {
     width: 100%;

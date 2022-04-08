@@ -33,7 +33,7 @@ const calculateStats = (myRaceStats, raceLength) => {
 
     return({ horseName: horseName, Length: raceLength, Races: numOf1000Races, Wins: wins/numOf1000Races * 100, Placed: placeds/numOf1000Races * 100, img: horseImg })
 
-  }
+}
 export default calculateStats 
 
 export const calculeMaxWinPlaceStats = (racesStats, aHorseId) => {
@@ -41,7 +41,7 @@ export const calculeMaxWinPlaceStats = (racesStats, aHorseId) => {
   let horsesRacesInfo = racesStats.map( (race) => { 
     const myhorse = race.node.horses.find( (horse) => horse.horseId === aHorseId )
     if( myhorse != undefined )
-      return( { name: myhorse.name,  raceLength: race.node.length, position: myhorse.position, img: myhorse.imgUrl })
+      return( { name: myhorse.name, raceLength: race.node.length, position: myhorse.position, img: myhorse.imgUrl })
   })
 
   let maxWins = 0;
@@ -71,8 +71,28 @@ export const AgregatePositions = (racesStats, aHorseId) => {
     }
   })
 
-  return( { name: "",  img: "",  raceLength: horseRacelength, position: horsePositions, preferLength: undefined, winPecent: 0, placePercent: 0})
+  return( { name: "",  img: "",  raceLength: horseRacelength, position: horsePositions, preferLength: undefined, winPecent: 0, placePercent: 0, tourneyPoints: 0})
 } 
+
+export const CalculateTournamentPoints = (horsesRacesInfo, tournamentPoints) => {
+  let myTournamentPoints = 0
+  let pointsAverage = 0
+
+  //console.log( racesPositions)
+  //console.log( "Points"  + tournamentPoints)
+  //console.log( horsesRacesInfo.position.length)
+
+  if( horsesRacesInfo.position.length > 0  ){
+    for(let i=0; i<horsesRacesInfo.position.length; i++){
+      if( tournamentPoints[horsesRacesInfo.position[i]-1] != undefined ){
+        myTournamentPoints += tournamentPoints[horsesRacesInfo.position[i]-1];
+      }
+    }
+  pointsAverage = myTournamentPoints/horsesRacesInfo.position.length;
+  }
+
+  return(pointsAverage)
+}
 
 export async function GetCurrentTournament() {
   let response = await fetch(CURRENT_TOURNAMENT) 
