@@ -34,7 +34,7 @@ export async function SignInPlayer(signature){
         headers: { 'Content-Type': 'application/json; charset=utf-8' },
         body: JSON.stringify({"params_for_token":
         {"signed_message":signature}})
-    };
+    }; 
 
     var response = await fetch('https://api.zed.run/api/v1/auth/ws_token', requestOptions)
     const api_token_jason = await response.json()

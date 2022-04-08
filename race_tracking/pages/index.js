@@ -31,7 +31,7 @@ export default function TournamentCurrentStats()
     if( connection.isConnected ){ 
       loadRacesData(connection?.address);
     }
-  }, [connection?.isConnected])
+  }, [connection?.isConnected, connection?.address])
 
   async function ConnectWallet(){
     setConnection( await ConnectionManager() )  
