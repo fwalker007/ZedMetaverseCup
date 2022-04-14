@@ -151,6 +151,7 @@ export async function LoadData(public_address)
       let horsesRacesInfo = AgregatePositions(data.get_race_results.edges,horseInfo.horse_id)
       let winStats = calculeMaxWinPlaceStats(raceStatsTotal.data.get_race_results.edges, horseInfo.horse_id)
       horsesRacesInfo.horse_id = horseInfo.horse_id
+      horsesRacesInfo.class = horseInfo.class
       horsesRacesInfo.name = horseInfo.hash_info.name
       horsesRacesInfo.img = horseInfo.img_url
       if( winStats != undefined ){ //Win stats will be undefined if there are not races defined for a horse

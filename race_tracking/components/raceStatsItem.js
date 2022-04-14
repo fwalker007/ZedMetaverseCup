@@ -1,6 +1,7 @@
 import React from "react"
+import Image from 'next/image'
 import HorseTournamentInfoItem from "./horseTournamenInfoItem"
-
+import ClassPillBox from "./classPillBox"
 
 export default function RaceStatsItem({ raceStatsData }) {
 
@@ -11,6 +12,7 @@ export default function RaceStatsItem({ raceStatsData }) {
                     <img className="h-12 w-12 rounded-full" src={raceStatsData.img} alt="" />
                     <div className="flex flex-col justify-center gap-.5 overflow-hidden mt-2">
                         <div className="text-sm font-medium text-gray-900">{raceStatsData.name}</div>
+                        <ClassPillBox aClassNum={raceStatsData.class}/>
                     </div>
                 </div>
             </td>
