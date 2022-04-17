@@ -1,4 +1,4 @@
-import { TextsmsTwoTone } from "@material-ui/icons"
+import jwt_decode from "jwt-decode";
 
 const MAX_HORSES_PER_RQUEST = 10
 export let api_token 
@@ -20,12 +20,29 @@ export default async function GetPlayerHorses(stableAddress){
 
 export function IsAPITokenValid(){
 
-    api_token = localStorage.getItem('api_token');
+ 
+    api_token = localStorage.getItem('api_token');   
+    
+    console.log("TOKEN VALID?")
+    console.log(api_token)
+
     //Has token expired?
-    if( api_token != undefined){        
-        return(true)
+    if( api_token === undefined){  
+        console.log("NOT VALID")      
+        return(false)
     }
-    return(false)
+
+    let decoded = jwt_decode(api_token);
+    console.log(decoded);
+
+    if (Date.now() >= decoded.exp * 1000) {
+        console.log("EXPIRED")
+        console.log(decoded.exp)  
+        return false;
+      }
+
+    console.log("YES VALID")
+    return(true)
 }
 
 export async function SignInPlayer(signature){    
@@ -44,5 +61,5 @@ export async function SignInPlayer(signature){
     
     localStorage.setItem('api_token', api_token);
 
- //   console.log(api_token)
+    console.log(api_token)
 }
