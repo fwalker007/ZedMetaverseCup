@@ -1,5 +1,9 @@
 
 const PillBoxTypes = {
+    0: {
+        classes: "bg-[#353535] ",
+        text: "D",
+      },
     1: {
       classes: "bg-[#563d6d] ",
       text: "I",
