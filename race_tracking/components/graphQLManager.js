@@ -1,7 +1,7 @@
 import { setContext } from '@apollo/client/link/context';
 import {ApolloClient, InMemoryCache, createHttpLink, gql} from '@apollo/client';
-import {api_token} from "../libs/playerManager"
-
+import {api_token} from "./wallet/ConnectionManager";
+ 
 export const httpLink = createHttpLink({
   uri: 'https://zed-ql.zed.run/graphql',
 });
@@ -21,6 +21,110 @@ export const client = new ApolloClient({
   cache: new InMemoryCache()
 });
 
+
+export const GET_RACES_QL_TOURNEY =  gql`
+query($horseId:[int], $dates: Dates){
+  get_race_results(
+   first:10000000
+   input:
+   {only_my_racehorses: true,
+   is_tournament: false,
+   distance: {
+     from: 1000,
+     to: 2600
+   },
+   dates: $dates
+   horses:$horseId
+   }
+ ) {
+   edges {
+     node {
+       name
+       length
+       startTime: start_time
+       raceId: race_id
+       horses {
+         horseId: horse_id
+         time: finish_time
+         position: final_position
+         name
+         gate
+         owner: owner_address
+         bloodline
+         gender
+         breedType: breed_type
+         genotype: gen
+         races
+         coat
+         winRate: win_rate
+         career
+         skin {
+           name
+           image
+           texture
+         }
+         hexCode: hex_color
+         imgUrl: img_url
+         class
+         stable: stable_name
+       }
+     }
+   }
+ }
+}    
+`
+
+export const GET_RACES_QL_HISTORY =  gql`
+query($horseId:[int], $dates: Dates){
+  get_race_results(
+   first:10000000
+   input:
+   {only_my_racehorses: true,
+   is_tournament: false,
+   distance: {
+     from: 1000,
+     to: 2600
+   },
+   dates: $dates
+   horses:$horseId
+   }
+ ) {
+   edges {
+     node {
+       name
+       length
+       startTime: start_time
+       raceId: race_id
+       horses {
+         horseId: horse_id
+         time: finish_time
+         position: final_position
+         name
+         gate
+         owner: owner_address
+         bloodline
+         gender
+         breedType: breed_type
+         genotype: gen
+         races
+         coat
+         winRate: win_rate
+         career
+         skin {
+           name
+           image
+           texture
+         }
+         hexCode: hex_color
+         imgUrl: img_url
+         class
+         stable: stable_name
+       }
+     }
+   }
+ }
+}    
+`
 
 export const GET_RACES_QL =  gql`
 query (	$horsesIds: [Int] ){
@@ -73,7 +177,7 @@ query (	$horsesIds: [Int] ){
 }    
 `
 
-export const GET_RACES_QL_2 =  gql`
+export const GET_TOURNAMENT_RACES_QL =  gql`
 query (	$horsesIds: [Int], $dates: Dates ){
   get_race_results(
    first:1000

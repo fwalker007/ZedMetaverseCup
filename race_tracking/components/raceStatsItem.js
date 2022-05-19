@@ -5,6 +5,7 @@ import ClassPillBox from "./classPillBox"
 
 export default function RaceStatsItem({ raceStatsData }) {
 
+ 
     return (
         <tr>
             <td className="px-4 py-2">

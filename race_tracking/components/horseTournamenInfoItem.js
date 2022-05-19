@@ -15,11 +15,12 @@ export default function HorseTournamentInfoItem (props)
 
     return(
         <div className={classname} >
-            <PlaceInRaceItem place={props.positions[0]} baseColor="#222222" join="" />
-            <PlaceInRaceItem place={props.positions[1]} baseColor="#222222" join="/" />
-            <PlaceInRaceItem place={props.positions[2]} baseColor="#222222" join="/" />
-            <PlaceInRaceItem place={props.positions[3]} baseColor="#222222" join="/" />
-            <PlaceInRaceItem place={props.positions[4]} baseColor="#222222" join="/"/>
+            {
+                props.positions.map((element) => 
+                    <PlaceInRaceItem place={element} baseColor="#222222" join="/" />
+                )
+            }
+  
         </div>
     )
 }
