@@ -3,7 +3,7 @@ import {useQuery} from "@apollo/client";
 import {GET_RACES_QL_TOURNEY} from "./graphQLManager"
 import {AgregatePositions,calculeMaxWinPlaceStats, CalculateTournamentPoints} from './raceStatsManager'
 import RaceStatsItem from "./raceStatsItem";
-
+  
 export default function Horse (props)
 {   
     const horseID = props.horse.horse_id;
@@ -15,6 +15,7 @@ export default function Horse (props)
     const { loading, error, data } = useQuery(GET_RACES_QL_TOURNEY,{
         variables: {
             horseId : [horseID],
+            is_tournament: false,
             dates: 	{ 
                       "from": currentTournament.qualificationStartDate,
                       "to": currentTournament.qualificationEndDate
@@ -22,20 +23,20 @@ export default function Horse (props)
                 },
                 fetchPolicy: 'network-only',
                 pollInterval: 10000, 
-                notifyOnNetworkStatusChange:true,
-                onCompleted: () => console.log('called')
+                notifyOnNetworkStatusChange:true
+               // onCompleted: () => console.log("Call")
 
             });
    
             
     if (loading && data === undefined){ 
         return( <div>Loading...</div>) 
-     
+      
     }
     if (error){ return (<div>Error :(</div>) }
 
-    let tournamentData = data;
-   // console.log(tournamentData)
+    let tournamentData = data;   
+    //     console.log(tournamentData.get_race_results.edges.node)
     let horsesRacesInfo = AgregatePositions(tournamentData.get_race_results.edges, horseID)
     let winStats = calculeMaxWinPlaceStats(racesData.data.get_race_results.edges, horseID, horse.class)
     horsesRacesInfo.horse_id = horseID
@@ -49,7 +50,7 @@ export default function Horse (props)
     }   
     horsesRacesInfo.tourneyPoints = CalculateTournamentPoints(horsesRacesInfo, currentTournament.pointsStructure)
 
-    props.onSelectLanguage(horsesRacesInfo.horse_id, horsesRacesInfo.tourneyPoints);  
+    props.onNewPointsUpdated(horsesRacesInfo.horse_id, horsesRacesInfo.tourneyPoints);  
 
     return(
         <RaceStatsItem key={horsesRacesInfo.horse_id} raceStatsData={horsesRacesInfo}/>

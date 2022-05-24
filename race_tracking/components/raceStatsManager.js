@@ -4,7 +4,7 @@ const  CURRENT_TOURNAMENT = "https://tournaments-api.zed.run/tournaments?status=
 const calculateStats = (myRaceStats, raceLength, horseClass) => {
     
     let numOf1000Races = 0
-    let wins = 0
+    let wins = 0 
     let placeds = 0
     let horseName = ""
     let horseImg
@@ -84,6 +84,7 @@ export const CalculateTournamentPoints = (horsesRacesInfo, tournamentPoints) => 
   let pointsAverage = 0
 
   //console.log( racesPositions)
+
   //console.log( "Points"  + tournamentPoints)
   //console.log( horsesRacesInfo.position.length)
 

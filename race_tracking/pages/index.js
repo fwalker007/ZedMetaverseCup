@@ -48,23 +48,35 @@ export default function TournamentCurrentStats()
        setRacesData(res.raceStatsTotal)
     }catch(err) {}
     setIsLoading(false)
- }
+ } 
+    
+ const sortHorsesList = (horseID, tourneyPoints) => {
 
- const handleLanguage = (horseID, tourneyPoints) => {
  // console.log("HORSE ID " + horseID + " POINTS: " +  tourneyPoints);
 
   const myHorse = playersHorses.find((horse) => horse.horse_id === horseID )
-  myHorse.tourneyPoints = tourneyPoints
+  if( myHorse.tourneyPoints != tourneyPoints){
+    myHorse.tourneyPoints = tourneyPoints;
+    sortHorsesByPoints();
+  }
+ } 
 
-  playersHorses = playersHorses.sort((a,b) => b.tourneyPoints - a.tourneyPoints);
-  console.log(playersHorses)
+ const sortHorsesByPoints = () =>
+ {
+  //playersHorses.slice(0).sort((a,b) => a.tourneyPoints - b.tourneyPoints);
+ 
+    console.log("Sort Horses =============================================================")
+    playersHorses = playersHorses.sort((a,b) => b.tourneyPoints - a.tourneyPoints);
+  // console.log(playersHorses)
+
+    setPlayersHorses([...playersHorses]);  
 }
 
  const Horses = () =>(
     playersHorses.map( (horseInfo) => {   
-      console.log("here");
+      //console.log(horseInfo.hash_info.name);
       return(       
-        <Horse currentTournament={currentTournament} horse={horseInfo} racesHistorycalData={racesData} onSelectLanguage={handleLanguage}/>
+        <Horse currentTournament={currentTournament} horse={horseInfo} racesHistorycalData={racesData} onNewPointsUpdated={sortHorsesList} onChangesSortHorses={sortHorsesByPoints}/>
       )
     }) 
  )
