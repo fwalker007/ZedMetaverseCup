@@ -7,7 +7,7 @@ import GetPlayerHorses from '../components/playerManager';
 import TournamentTableHeader from "../components/TournamentTableHeader"
 import ConnectionManager, {GetWalletAddress, IsAPITokenValid} from "../components/wallet/ConnectionManager"
 import Horse from "../components/Horse";
-//
+
 export default function TournamentCurrentStats()
 {  
 
@@ -33,7 +33,7 @@ export default function TournamentCurrentStats()
       loadRacesData(connection?.address);
     }
   }, [connection?.isConnected, connection?.address])
-//
+
   async function ConnectWallet(){
     setConnection( await ConnectionManager() )  
   }
