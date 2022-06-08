@@ -60,14 +60,25 @@ export default function TournamentCurrentStats()
     sortHorsesByPoints();
   }
  } 
-
- const sortHorsesByPoints = () =>
- {
-  //playersHorses.slice(0).sort((a,b) => a.tourneyPoints - b.tourneyPoints);
  
-    console.log("Sort Horses =============================================================")
-    playersHorses = playersHorses.sort((a,b) => b.tourneyPoints - a.tourneyPoints);
-  // console.log(playersHorses)
+ const sortHorsesByPoints = () =>
+ { 
+  //  console.log("Sort Horses =============================================================")
+    playersHorses = playersHorses.sort(function (a, b)
+    {
+      //Sort by tournament points
+      if (a.tourneyPoints > b.tourneyPoints) return -1;
+      if (a.tourneyPoints < b.tourneyPoints) return 1;
+    
+      //return 0;
+      // If tournament points equal sort by win rate
+      if (a.win_rate < b.win_rate) return 1;
+      if (a.win_rate > b.win_rate) return -1;
+
+      return 0;
+    });
+    
+   console.log(playersHorses)
 
     setPlayersHorses([...playersHorses]);  
 }

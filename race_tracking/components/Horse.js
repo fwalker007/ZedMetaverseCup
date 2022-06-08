@@ -8,7 +8,7 @@ export default function Horse (props)
 {   
     const horseID = props.horse.horse_id;
     const horse = props.horse;
-    const horseInfo = props.horse.hash_info;
+    const horseInfo = props.horse.hash_info; 
     const currentTournament = props.currentTournament;
     const racesData = props.racesHistorycalData;
 
@@ -30,7 +30,8 @@ export default function Horse (props)
    
             
     if (loading && data === undefined){ 
-        return( <div>Loading...</div>) 
+        //return( <div>Loading...</div>) 
+        return(<></>)
       
     }
     if (error){ return (<div>Error :(</div>) }
@@ -48,6 +49,8 @@ export default function Horse (props)
       horsesRacesInfo.winPecent = winStats.Wins
       horsesRacesInfo.placePercent = winStats.Placed
     }   
+    horsesRacesInfo.win_rate = horse.win_rate
+    horsesRacesInfo.rating = horse.rating
     horsesRacesInfo.tourneyPoints = CalculateTournamentPoints(horsesRacesInfo, currentTournament.pointsStructure)
 
     props.onNewPointsUpdated(horsesRacesInfo.horse_id, horsesRacesInfo.tourneyPoints);  
