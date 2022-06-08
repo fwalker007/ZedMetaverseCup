@@ -87,7 +87,7 @@ export default function TournamentCurrentStats()
     playersHorses.map( (horseInfo) => {   
       //console.log(horseInfo.hash_info.name);
       return(       
-        <Horse currentTournament={currentTournament} horse={horseInfo} racesHistorycalData={racesData} onNewPointsUpdated={sortHorsesList} onChangesSortHorses={sortHorsesByPoints}/>
+        <Horse key={horseInfo.name} currentTournament={currentTournament} horse={horseInfo} racesHistorycalData={racesData} onNewPointsUpdated={sortHorsesList} onChangesSortHorses={sortHorsesByPoints}/>
       )
     }) 
  )
