@@ -17,7 +17,7 @@ export default function HorseTournamentInfoItem (props)
         <div className={classname} >
             {
                 props.positions.map((element) => 
-                    <PlaceInRaceItem place={element} baseColor="#222222" join="/" />
+                    <PlaceInRaceItem key={element.id} place={element} baseColor="#222222" join="/" />
                 )
             }
   
