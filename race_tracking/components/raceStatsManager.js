@@ -1,16 +1,16 @@
 
-const CURRENT_TOURNAMENT = "https://tournaments-api.zed.run/tournaments/current"
+const  CURRENT_TOURNAMENT = "https://tournaments-api.zed.run/tournaments?status=qualification"
 
-const calculateStats = (myRaceStats, raceLength) => {
+const calculateStats = (myRaceStats, raceLength, horseClass) => {
     
     let numOf1000Races = 0
-    let wins = 0
-    let placeds = 0
+    let wins = 0 
+    let placeds = 0 
     let horseName = ""
     let horseImg
     
     const oneThousandRaces = myRaceStats.filter( (lengthRace) =>{
-        if( lengthRace != undefined && lengthRace.raceLength == raceLength ){
+        if( lengthRace != undefined && lengthRace.raceLength == raceLength && lengthRace.class == horseClass){
           horseName = lengthRace.name
           horseImg = lengthRace.img
            numOf1000Races++;
@@ -36,20 +36,22 @@ const calculateStats = (myRaceStats, raceLength) => {
 }
 export default calculateStats 
 
-export const calculeMaxWinPlaceStats = (racesStats, aHorseId) => {
+export const calculeMaxWinPlaceStats = (racesStats, aHorseId, aHorseClass) => {
 
   let horsesRacesInfo = racesStats.map( (race) => { 
     const myhorse = race.node.horses.find( (horse) => horse.horseId === aHorseId )
     if( myhorse != undefined )
-      return( { name: myhorse.name, raceLength: race.node.length, position: myhorse.position, img: myhorse.imgUrl })
-  })
+    {
+      return( { name: myhorse.name, raceLength: race.node.length, position: myhorse.position, img: myhorse.imgUrl, class: myhorse.class })
+    }
+    })
 
   let maxWins = 0;
   let maxRace 
 
   for( let i=0; i<9; i++){
     let raceLength = (i * 200 ) + 1000
-    const raceStats = calculateStats(horsesRacesInfo, raceLength)
+    const raceStats = calculateStats(horsesRacesInfo, raceLength, aHorseClass)
     if( raceStats.Wins > maxWins ){
       maxWins = raceStats.Wins
       maxRace = raceStats
@@ -71,6 +73,9 @@ export const AgregatePositions = (racesStats, aHorseId) => {
     }
   })
 
+ // console.log(horsePositions)
+ // console.log(horseRacelength)
+
   return( { name: "",  img: "",  raceLength: horseRacelength, position: horsePositions, preferLength: undefined, winPecent: 0, placePercent: 0, tourneyPoints: 0})
 } 
 
@@ -79,6 +84,7 @@ export const CalculateTournamentPoints = (horsesRacesInfo, tournamentPoints) => 
   let pointsAverage = 0
 
   //console.log( racesPositions)
+
   //console.log( "Points"  + tournamentPoints)
   //console.log( horsesRacesInfo.position.length)
 
@@ -91,15 +97,20 @@ export const CalculateTournamentPoints = (horsesRacesInfo, tournamentPoints) => 
   pointsAverage = myTournamentPoints/horsesRacesInfo.position.length;
   }
 
-  return(pointsAverage)
+  return(pointsAverage) 
 }
 
 export async function GetCurrentTournament() {
+
+  let qualifyingTournament = []  
+
   let response = await fetch(CURRENT_TOURNAMENT) 
-  let currentTournament = await response.json()  
+  let trounamentsData = await response.json()  
+  qualifyingTournament = [...qualifyingTournament,...trounamentsData]
+  
+  qualifyingTournament.sort( (a,b) => a.qualificationEndDate - b.qualificationEndDate)
 
-  return(currentTournament)
+  return(qualifyingTournament[0])
 }
-
 
 

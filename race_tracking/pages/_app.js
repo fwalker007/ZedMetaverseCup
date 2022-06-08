@@ -4,7 +4,7 @@ import Web3 from 'web3'
 function getLibrary(provider) {
   return new Web3(provider)
 }
-
+ 
 function MyApp({ Component, pageProps }) {
   return (
       <Component {...pageProps} />
@@ -12,3 +12,4 @@ function MyApp({ Component, pageProps }) {
 }
 
 export default MyApp
+ 

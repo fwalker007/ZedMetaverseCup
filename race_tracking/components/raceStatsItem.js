@@ -2,6 +2,7 @@ import React from "react"
 import Image from 'next/image'
 import HorseTournamentInfoItem from "./horseTournamenInfoItem"
 import ClassPillBox from "./classPillBox"
+import ClassRating from "./classRating"
 
 export default function RaceStatsItem({ raceStatsData }) {
 
@@ -13,6 +14,7 @@ export default function RaceStatsItem({ raceStatsData }) {
                     <div className="flex flex-col justify-center gap-.5 overflow-hidden mt-2">
                         <div className="text-sm font-medium text-gray-900">{raceStatsData.name}</div>
                         <ClassPillBox aClassNum={raceStatsData.class}/>
+                        <ClassRating aClassNum={raceStatsData.class} aRating={raceStatsData.rating}/>
                     </div>
                 </div>
             </td>
@@ -34,6 +36,7 @@ export default function RaceStatsItem({ raceStatsData }) {
                     <div className="ml-4" />
                     <div className="text-sm text-center font-medium text-gray-900">{raceStatsData.preferLength}</div>
                     <div className="text-sm text-center font-medium text-gray-900">{raceStatsData.winPecent.toFixed(2)}% / {raceStatsData.placePercent.toFixed(2)}%</div>
+                    <div className="text-sm text-center font-medium text-gray-900">{raceStatsData.win_rate.toFixed(2)}%</div>
                 </div>
             </td>
         </tr>

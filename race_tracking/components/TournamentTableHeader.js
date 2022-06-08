@@ -11,7 +11,7 @@ export default function TournamentTableHeader({isConnected, address, connect, to
           <th>
           </th>
           <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider" >
-            {isConnected ? <span> <b>{address}</b></span> : <span>Not connected</span>}
+            {isConnected ? <span> <b> 0x...{address.substring(address.length - 4)}</b></span> : <span>Not connected</span>}
           </th>
           <th>
           {!isConnected ? <WalletButton connect={connect}/> : <span>Connected </span>}
