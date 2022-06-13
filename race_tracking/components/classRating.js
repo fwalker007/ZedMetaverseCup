@@ -29,6 +29,12 @@ const classRatings = {
      
 export default function ClassRating({ aClassNum, aRating }) {
  
+    if( aClassNum == 0)
+    {
+        return(<div>0</div>)
+    }
+
+    
     const classRate = classRatings[aClassNum]
 
     return(
