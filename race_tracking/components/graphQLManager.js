@@ -25,7 +25,7 @@ export const client = new ApolloClient({
 export const GET_RACES_QL_TOURNEY =  gql`
 query($horseId:[int], $dates: Dates){
   get_race_results(
-   first:10000000
+   first:100
    input:
    {only_my_racehorses: true,
    is_tournament: false,
@@ -36,7 +36,7 @@ query($horseId:[int], $dates: Dates){
    dates: $dates
    horses:$horseId
    }
- ) {
+ ) { 
    edges {
      node {
        name
@@ -77,7 +77,7 @@ query($horseId:[int], $dates: Dates){
 export const GET_RACES_QL_HISTORY =  gql`
 query($horseId:[int], $dates: Dates){
   get_race_results(
-   first:10000000
+   first:100
    input:
    {only_my_racehorses: true,
    is_tournament: false,
@@ -129,7 +129,7 @@ query($horseId:[int], $dates: Dates){
 export const GET_RACES_QL =  gql`
 query (	$horsesIds: [Int] ){
   get_race_results(
-   first:10000000
+   first:100
    input:
    {only_my_racehorses: true,
    is_tournament: false,
@@ -180,7 +180,7 @@ query (	$horsesIds: [Int] ){
 export const GET_TOURNAMENT_RACES_QL =  gql`
 query (	$horsesIds: [Int], $dates: Dates ){
   get_race_results(
-   first:1000
+   first:100
    input: 
    {only_my_racehorses: true,
    is_tournament: false,

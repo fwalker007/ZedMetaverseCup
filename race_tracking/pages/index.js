@@ -169,7 +169,8 @@ export async function LoadData(public_address)
     return(horse.horse_id)
    })
 
-  //Get the player race information up to the trounament 
+   console.log("GOT HERE ============================") 
+  //Get the player race information up to the tournament 
     const raceStatsTotal = await client.query({
       query: GET_RACES_QL,
       variables: {
@@ -177,7 +178,7 @@ export async function LoadData(public_address)
       }
     })
 
-//  console.log(raceStatsTotal)
+ // console.log(raceStatsTotal)
 
   // playersHorses = playersHorses.slice(1,2)
    console.log(playersHorses)

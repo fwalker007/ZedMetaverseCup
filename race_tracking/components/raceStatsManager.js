@@ -1,6 +1,7 @@
 
 const  CURRENT_TOURNAMENT = "https://tournaments-api.zed.run/tournaments?status=qualification"
 
+
 const calculateStats = (myRaceStats, raceLength, horseClass) => {
     
     let numOf1000Races = 0
