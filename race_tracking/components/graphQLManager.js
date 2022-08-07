@@ -22,8 +22,8 @@ export const client = new ApolloClient({
 });
 
 
-export const GET_RACES_QL_TOURNEY =  gql`
-query($horseId:[int], $dates: Dates){
+export const GET_QUALIFYING_RACES =  gql`
+query($horseId:[Int], $dates: Dates){
   get_race_results(
    first:100
    input:
@@ -75,7 +75,7 @@ query($horseId:[int], $dates: Dates){
 `
 
 export const GET_RACES_QL_HISTORY =  gql`
-query($horseId:[int], $dates: Dates){
+query($horseId:[Int], $dates: Dates){
   get_race_results(
    first:100
    input:

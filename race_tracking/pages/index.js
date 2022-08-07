@@ -1,12 +1,13 @@
 import { useState, useEffect  } from "react"
 import {ApolloProvider} from '@apollo/client';
-import { CircularProgress } from "@material-ui/core"
+import {CircularProgress } from "@material-ui/core"
 import {GetCurrentTournament } from "../components/raceStatsManager"
 import {client, GET_RACES_QL} from "../components/graphQLManager"
 import GetPlayerHorses from '../components/playerManager';
 import TournamentTableHeader from "../components/TournamentTableHeader"
 import ConnectionManager, {GetWalletAddress, IsAPITokenValid} from "../components/wallet/ConnectionManager"
 import Horse from "../components/Horse";
+
 
 export default function TournamentCurrentStats()
 {  
@@ -45,7 +46,7 @@ export default function TournamentCurrentStats()
        setPlayersHorses(res.playersHorses)
      //  setRacesData(res.currentTourneyStats)
        setCurrentTournament(res.currentTournament)
-       setRacesData(res.raceStatsTotal)
+       setRacesData(res.edges)
     }catch(err) {}
     setIsLoading(false)
  } 
@@ -105,12 +106,13 @@ export default function TournamentCurrentStats()
    </tr>
  )
 
-  return (
+
+return (
       <ApolloProvider client={client}>
         
-        <div className="flex items-center justify-center min-h-screen bg-gray-900">
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
        
-       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
              <table className="min-w-full divide-y divide-gray-200">
@@ -152,38 +154,56 @@ export default function TournamentCurrentStats()
   }
    
 
+  async function GetHorseHistorycalRacingData(horse_id)
+  {
+    console.log("Historycal data for HorseID = " + horse_id + "============================") 
+    const raceStats = await client.query({
+      query: GET_RACES_QL,
+      variables: {
+        horsesIds:[horse_id]
+      }
+    })
+
+    return ( raceStats );
+  }
+
 export async function LoadData(public_address)
 { 
     console.log( "Wallet Address " + public_address)
 
+  //Get information on the tournamnet currently running
+    let currentTournament =  await GetCurrentTournament()
+    console.log(currentTournament)
+
   //Get the players horses
     let playersHorses = await GetPlayerHorses(public_address) 
     console.log("\n  ============================ PLAYER HAS " + playersHorses.length + " HORSES  ============================================== " )
- 
-  //Get information on the tournamnet currently running
-    let currentTournament =  await GetCurrentTournament()
-   console.log(currentTournament)
+   
+    let edges=[];
+    //let horsesIDs =  playersHorses.map( (horse) =>
+    //{ 
+    //  horse.tourneyPoints = 0
+     // const horseData = await GetHorseHistorycalRacingData([horse.horse_id])
+      //console.log(horseData.data.get_race_results.edges) 
+    //  edges.concat(horseData.data.get_race_results.edges);
+   //   return(horse.horse_id)
+   // })
 
-   let horsesIDs = playersHorses.map( (horse) => { 
-    horse.tourneyPoints = 0
-    return(horse.horse_id)
-   })
-
-   console.log("GOT HERE ============================") 
-  //Get the player race information up to the tournament 
-    const raceStatsTotal = await client.query({
-      query: GET_RACES_QL,
-      variables: {
-        horseIds: {horsesIDs}
-      }
-    })
-
- // console.log(raceStatsTotal)
-
-  // playersHorses = playersHorses.slice(1,2)
+   //playersHorses = playersHorses.slice(1,2)
+   console.log("playersHorses =")
    console.log(playersHorses)
-    
+
+    for (let horse of playersHorses) 
+    {
+      horse.tourneyPoints = 0
+      const horseData = await GetHorseHistorycalRacingData(horse.horse_id)
+      edges = edges.concat(horseData.data.get_race_results.edges)
+   
+      console.log("Got Historical for " + horse.horse_id + " data ============================") 
+      console.log(edges) 
+  }
+   
    return (
-    { currentTournament, playersHorses, raceStatsTotal }
+    { currentTournament, playersHorses, edges }
    )
 }

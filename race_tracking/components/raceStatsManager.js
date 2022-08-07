@@ -45,6 +45,9 @@ export const calculeMaxWinPlaceStats = (racesStats, aHorseId, aHorseClass) => {
     {
       return( { name: myhorse.name, raceLength: race.node.length, position: myhorse.position, img: myhorse.imgUrl, class: myhorse.class })
     }
+    else{
+      console.log("Horse Historical Race Data Missing")
+    }
     })
 
   let maxWins = 0;

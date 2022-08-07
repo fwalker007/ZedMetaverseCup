@@ -1,6 +1,6 @@
 import React from "react"
 import {useQuery} from "@apollo/client";
-import {GET_RACES_QL_TOURNEY} from "./graphQLManager"
+import {GET_QUALIFYING_RACES} from "./graphQLManager"
 import {AgregatePositions,calculeMaxWinPlaceStats, CalculateTournamentPoints} from './raceStatsManager'
 import RaceStatsItem from "./raceStatsItem";
   
@@ -19,14 +19,14 @@ export default function Horse (props)
     const racesData = props.racesHistorycalData;
 
    // LoadTournamentRaces(horseID, currentTournament)
-   
-    const { loading, error, data } = useQuery(GET_RACES_QL_TOURNEY,{
+
+    const { loading, error, data } = useQuery(GET_QUALIFYING_RACES,{
         variables: {
             horseId : [horseID],
             is_tournament: false,
-            dates: 	{ 
-                      "from": currentTournament.qualificationStartDate,
-                      "to": currentTournament.qualificationEndDate
+            dates:{ 
+                    "from": currentTournament.qualificationStartDate,
+                    "to": currentTournament.qualificationEndDate
                   }
                 },
                 fetchPolicy: 'network-only',
@@ -40,14 +40,16 @@ export default function Horse (props)
     if (loading && data === undefined){ 
         //return( <div>Loading...</div>) 
         return(<></>)
-      
     }
-    if (error){ return (<div>Error :(</div>) }
+    if (error)
+    {
+       return (<div>Error :(</div>) 
+    }
 
-    let tournamentData = data;   
-    console.log(tournamentData.get_race_results)
-    let horsesRacesInfo = AgregatePositions(tournamentData.get_race_results.edges, horseID)
-    let winStats = calculeMaxWinPlaceStats(racesData.data.get_race_results.edges, horseID, horse.class)
+    let qualifyingRaces = data;   
+    let horsesRacesInfo = AgregatePositions(qualifyingRaces.get_race_results.edges, horseID)
+    let winStats = calculeMaxWinPlaceStats(racesData, horseID, horse.class)
+
     horsesRacesInfo.horse_id = horseID
     horsesRacesInfo.class = horse.class
     horsesRacesInfo.name = horseInfo.name
@@ -89,7 +91,7 @@ async function GetHorseRacesInTournament(horseID, currentTournament){
     let offset = 0
   
     do{
-       var response = await fetch("https://zed.run/racing/results?dates[]=" + currentTournament.qualificationStartDate +"," + currentTournament.qualificationStartDate  + "&distance[]=1000,2600&horseId=" + horseID + "&location=&onlyTournaments=false")
+      var response = await fetch("https://zed.run/racing/results?dates[]=" + currentTournament.qualificationStartDate +"," + currentTournament.qualificationEndDate  + "&distance[]=1000,2600&horseId=" + horseID + "&location=&onlyTournaments=false")
       tournamentRaces = await response.json()  
       allRaces = [...mergedHorses,...tournamentRaces];   
       offset += MAX_HORSES_PER_RQUEST
