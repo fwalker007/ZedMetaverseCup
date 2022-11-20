@@ -25,8 +25,8 @@ export default function Horse (props)
             horseId : [horseID],
             is_tournament: false,
             dates:{ 
-                    "from": currentTournament.qualificationStartDate,
-                    "to": currentTournament.qualificationEndDate
+                    "from": "2022-11-19T00:00:00.000Z",
+                    "to": "2022-11-22T00:00:00.000Z"
                   }
                 },
                 fetchPolicy: 'network-only',
@@ -41,27 +41,31 @@ export default function Horse (props)
         //return( <div>Loading...</div>) 
         return(<></>)
     }
-    if (error)
-    {
-       return (<div>Error :(</div>) 
-    }
+    //if (error)
+   // {
+   //    return (<div>Error :(</div>) 
+   // }
+
+    //console.log(data);
 
     let qualifyingRaces = data;   
     let horsesRacesInfo = AgregatePositions(qualifyingRaces.get_race_results.edges, horseID)
-    let winStats = calculeMaxWinPlaceStats(racesData, horseID, horse.class)
+   // let winStats = calculeMaxWinPlaceStats(racesData, horseID, horse.class)
 
     horsesRacesInfo.horse_id = horseID
     horsesRacesInfo.class = horse.class
     horsesRacesInfo.name = horseInfo.name
     horsesRacesInfo.img = horse.img_url
-    if( winStats != undefined ){ //Win stats will be undefined if there are not races defined for a horse
-      horsesRacesInfo.preferLength = winStats.Length
-      horsesRacesInfo.winPecent = winStats.Wins
-      horsesRacesInfo.placePercent = winStats.Placed
-    }   
-    horsesRacesInfo.win_rate = horse.win_rate
+
+    //if( winStats != undefined ){ //Win stats will be undefined if there are not races defined for a horse
+    //  horsesRacesInfo.preferLength = winStats.Length
+    //  horsesRacesInfo.winPecent = winStats.Wins
+    //  horsesRacesInfo.placePercent = winStats.Placed
+    //}   
+    //horsesRacesInfo.win_rate = horse.win_rate
+    
     horsesRacesInfo.rating = horse.rating
-    horsesRacesInfo.tourneyPoints = CalculateTournamentPoints(horsesRacesInfo, currentTournament.pointsStructure)
+    horsesRacesInfo.tourneyPoints = CalculateTournamentPoints(horsesRacesInfo, [1,1,1,0,0,0,0,0,0,0,0,0])
 
     props.onNewPointsUpdated(horsesRacesInfo.horse_id, horsesRacesInfo.tourneyPoints);  
 
@@ -93,7 +97,7 @@ async function GetHorseRacesInTournament(horseID, currentTournament){
     do{
       var response = await fetch("https://zed.run/racing/results?dates[]=" + currentTournament.qualificationStartDate +"," + currentTournament.qualificationEndDate  + "&distance[]=1000,2600&horseId=" + horseID + "&location=&onlyTournaments=false")
       tournamentRaces = await response.json()  
-      allRaces = [...mergedHorses,...tournamentRaces];   
+      allRaces = [...mergedHorses,...tournamentRaces]
       offset += MAX_HORSES_PER_RQUEST
     }while( tournamentRaces.length > 0)
   

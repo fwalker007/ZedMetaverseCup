@@ -40,6 +40,7 @@ query($horseId:[Int], $dates: Dates){
    edges {
      node {
        name
+       fee
        length
        startTime: start_time
        raceId: race_id
@@ -48,12 +49,8 @@ query($horseId:[Int], $dates: Dates){
          time: finish_time
          position: final_position
          name
-         gate
          owner: owner_address
-         bloodline
-         gender
          breedType: breed_type
-         genotype: gen
          races
          coat
          winRate: win_rate
@@ -129,7 +126,7 @@ query($horseId:[Int], $dates: Dates){
 export const GET_RACES_QL =  gql`
 query (	$horsesIds: [Int] ){
   get_race_results(
-   first:100
+   first:1
    input:
    {only_my_racehorses: true,
    is_tournament: false,

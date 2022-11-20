@@ -128,7 +128,13 @@ return (
                      Placement
                    </th>
                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">                
-                     Avg Points
+                      Points Free
+                   </th>  
+                   <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">                
+                      Points Paid
+                   </th>  
+                   <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">                
+                      Points Total
                    </th>  
                    <th scope="col" className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                      Prefered length
@@ -180,14 +186,6 @@ export async function LoadData(public_address)
     console.log("\n  ============================ PLAYER HAS " + playersHorses.length + " HORSES  ============================================== " )
    
     let edges=[];
-    //let horsesIDs =  playersHorses.map( (horse) =>
-    //{ 
-    //  horse.tourneyPoints = 0
-     // const horseData = await GetHorseHistorycalRacingData([horse.horse_id])
-      //console.log(horseData.data.get_race_results.edges) 
-    //  edges.concat(horseData.data.get_race_results.edges);
-   //   return(horse.horse_id)
-   // })
 
    //playersHorses = playersHorses.slice(1,2)
    console.log("playersHorses =")
@@ -199,9 +197,9 @@ export async function LoadData(public_address)
       const horseData = await GetHorseHistorycalRacingData(horse.horse_id)
       edges = edges.concat(horseData.data.get_race_results.edges)
    
-      console.log("Got Historical for " + horse.horse_id + " data ============================") 
-      console.log(edges) 
-  }
+      //console.log("Got Historical for " + horse.horse_id + " data ============================") 
+      //console.log(edges) 
+    }
    
    return (
     { currentTournament, playersHorses, edges }

@@ -64,41 +64,68 @@ export const calculeMaxWinPlaceStats = (racesStats, aHorseId, aHorseClass) => {
   return(maxRace)
 } 
 
+export const calculePodiumStats = (racesStats, aHorseId, aHorseClass) => {
+
+  let horsesRacesInfo = racesStats.map( (race) => { 
+    const myhorse = race.node.horses.find( (horse) => horse.horseId === aHorseId )
+    if( myhorse != undefined )
+    {
+      return( { name: myhorse.name, raceLength: race.node.length, position: myhorse.position, img: myhorse.imgUrl, class: myhorse.class })
+    }
+  //  else{
+  //    console.log("Horse Historical Race Data Missing")
+  //  }
+    })
+
+  let maxWins = 0;
+  let maxRace 
+
+  for( let i=0; i<9; i++){
+    let raceLength = (i * 200 ) + 1000
+    const raceStats = calculateStats(horsesRacesInfo, raceLength, aHorseClass)
+    if( raceStats.Wins > maxWins ){
+      maxWins = raceStats.Wins
+      maxRace = raceStats
+    }
+  }
+  return(maxRace)
+} 
+
 export const AgregatePositions = (racesStats, aHorseId) => {
 
   let horsePositions = []
   let horseRacelength = []
+  let horseSkins = []
+  let racesFee = []
 
   racesStats.map( (race) => { 
     const myhorse = race.node.horses.find( (horse) => horse.horseId === aHorseId )
-    if( myhorse != undefined ){
+    if( myhorse != undefined && myhorse.skin != null && myhorse.skin.name == "MC Spain")
+    {
       horsePositions.push( myhorse.position )
       horseRacelength.push( race.node.length )
+      horseSkins.push( myhorse.skin )
+      racesFee.push( race.node.fee)
     }
   })
 
- // console.log(horsePositions)
- // console.log(horseRacelength)
-
-  return( { name: "",  img: "",  raceLength: horseRacelength, position: horsePositions, preferLength: undefined, winPecent: 0, placePercent: 0, tourneyPoints: 0})
+  return( { name: "",  img: "",  raceLength: horseRacelength, position: horsePositions, skin: horseSkins, fee: racesFee, preferLength: undefined, winPecent: 0, placePercent: 0, tourneyPoints: 0})
 } 
 
 export const CalculateTournamentPoints = (horsesRacesInfo, tournamentPoints) => {
   let myTournamentPoints = 0
   let pointsAverage = 0
 
-  //console.log( racesPositions)
-
-  //console.log( "Points"  + tournamentPoints)
-  //console.log( horsesRacesInfo.position.length)
-
   if( horsesRacesInfo.position.length > 0  ){
     for(let i=0; i<horsesRacesInfo.position.length; i++){
-      if( tournamentPoints[horsesRacesInfo.position[i]-1] != undefined ){
-        myTournamentPoints += tournamentPoints[horsesRacesInfo.position[i]-1];
+      if( tournamentPoints[horsesRacesInfo.position[i]-1] != undefined )
+      {
+        myTournamentPoints += tournamentPoints[horsesRacesInfo.position[i]-1];      
+        if(horsesRacesInfo.fee[i] != "0.0")
+          myTournamentPoints += tournamentPoints[horsesRacesInfo.position[i]-1];
       }
     }
-  pointsAverage = myTournamentPoints/horsesRacesInfo.position.length;
+  pointsAverage = myTournamentPoints; ///horsesRacesInfo.position.length;
   }
 
   return(pointsAverage) 
