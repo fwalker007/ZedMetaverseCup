@@ -26,11 +26,11 @@ export default function Horse (props)
             is_tournament: false,
             dates:{ 
                     "from": "2022-11-19T00:00:00.000Z",
-                    "to": "2022-11-22T00:00:00.000Z"
+                    "to": "2022-11-23T00:00:00.000Z"
                   }
                 },
                 fetchPolicy: 'network-only',
-                pollInterval: 10000, 
+                pollInterval: 30001, 
                 notifyOnNetworkStatusChange:true
                // onCompleted: () => console.log("Call")
 
@@ -41,10 +41,11 @@ export default function Horse (props)
         //return( <div>Loading...</div>) 
         return(<></>)
     }
-    //if (error)
-   // {
+    if (error)
+    {
    //    return (<div>Error :(</div>) 
-   // }
+   return(<></>)
+    }
 
     //console.log(data);
 
